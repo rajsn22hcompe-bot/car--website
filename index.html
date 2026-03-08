@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VELOCE — Luxury Car Rental</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --accent: #e8b94f;
+    --accent2: #c9973a;
+    --text: #f0ece4;
+    --muted: #888880;
+    --border: #222222;
+    --red: #e84f4f;
+    --green: #4fe87a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px; color: var(--accent); cursor: pointer; }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.2s; cursor: pointer; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { background: var(--accent); color: var(--bg); padding: 10px 22px; border-radius: 4px; font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border: none; transition: background 0.2s; }
+  .nav-cta:hover { background: var(--accent2); }
+  .nav-user { display: none; align-items: center; gap: 12px; }
+  .nav-user span { color: var(--accent); font-size: 13px; font-weight: 500; }
+  .nav-user button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; letter-spacing: 1px; transition: all 0.2s; }
+  .nav-user button:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 120px 48px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: 
+      radial-gradient(ellipse 70% 60% at 80% 50%, rgba(232,185,79,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 10% 80%, rgba(232,185,79,0.04) 0%, transparent 50%),
+      linear-gradient(160deg, #0a0a0a 0%, #0f0f0f 100%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0; opacity: 0.04;
+    background-image: linear-gradient(var(--accent) 1px, transparent 1px), linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 700px; }
+  .hero-tag { display: inline-block; border: 1px solid var(--accent); color: var(--accent); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; padding: 6px 14px; border-radius: 2px; margin-bottom: 24px; }
+  .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 9vw, 120px); line-height: 0.9; letter-spacing: 2px; margin-bottom: 24px; }
+  .hero h1 span { color: var(--accent); }
+  .hero p { color: var(--muted); font-size: 17px; max-width: 480px; margin-bottom: 40px; font-weight: 300; }
+  .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary { background: var(--accent); color: var(--bg); padding: 14px 32px; border-radius: 4px; font-weight: 700; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border: none; transition: all 0.2s; }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-outline { background: transparent; color: var(--text); padding: 14px 32px; border-radius: 4px; font-weight: 500; font-size: 13px; letter-spacing: 1px; cursor: pointer; border: 1px solid var(--border); transition: all 0.2s; }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* CAR SHOWCASE */
+  .car-showcase {
+    position: absolute; right: -40px; top: 50%; transform: translateY(-50%);
+    z-index: 1; width: 55vw; max-width: 800px;
+    opacity: 0.9;
+  }
+  .car-showcase img { width: 100%; filter: drop-shadow(0 30px 80px rgba(232,185,79,0.15)); }
+
+  /* STATS STRIP */
+  .stats-strip {
+    position: relative; z-index: 2;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+  }
+  .stat-item { flex: 1; padding: 28px 48px; border-right: 1px solid var(--border); }
+  .stat-item:last-child { border-right: none; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--accent); letter-spacing: 2px; }
+  .stat-label { color: var(--muted); font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
+
+  /* SEARCH SECTION */
+  #search-section {
+    padding: 80px 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .section-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 2px; margin-bottom: 40px; }
+  .search-form {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto;
+    gap: 12px; align-items: end;
+    background: var(--surface2); padding: 24px; border-radius: 8px; border: 1px solid var(--border);
+  }
+  .form-group label { display: block; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .form-group input, .form-group select {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); padding: 12px 16px; border-radius: 4px; font-size: 14px;
+    font-family: 'DM Sans', sans-serif; transition: border-color 0.2s; outline: none;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+  .form-group select option { background: var(--bg); }
+  .search-btn { background: var(--accent); color: var(--bg); padding: 12px 28px; border-radius: 4px; font-weight: 700; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border: none; white-space: nowrap; transition: background 0.2s; height: 46px; }
+  .search-btn:hover { background: var(--accent2); }
+
+  /* CARS SECTION */
+  #cars-section { padding: 80px 48px; }
+  .filter-bar { display: flex; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
+  .filter-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 8px 20px; border-radius: 20px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .filter-btn.active, .filter-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,185,79,0.06); }
+  .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
+  .car-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; transition: all 0.3s; cursor: pointer;
+  }
+  .car-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(232,185,79,0.1); }
+  .car-card-img { position: relative; background: var(--surface2); height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .car-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .car-card:hover .car-card-img img { transform: scale(1.05); }
+  .car-badge { position: absolute; top: 12px; left: 12px; background: var(--accent); color: var(--bg); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; padding: 4px 10px; border-radius: 2px; text-transform: uppercase; }
+  .car-badge.available { background: var(--green); }
+  .car-badge.limited { background: var(--red); }
+  .car-card-body { padding: 20px 24px; }
+  .car-brand { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .car-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 12px; }
+  .car-specs { display: flex; gap: 16px; margin-bottom: 16px; }
+  .spec { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .spec-icon { font-size: 14px; }
+  .car-card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border); }
+  .car-price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); letter-spacing: 1px; }
+  .car-price span { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted); letter-spacing: 0; }
+  .rent-btn { background: var(--accent); color: var(--bg); padding: 9px 20px; border-radius: 4px; font-weight: 700; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border: none; transition: all 0.2s; }
+  .rent-btn:hover { background: var(--accent2); }
+
+  /* HOW IT WORKS */
+  #how-section { padding: 80px 48px; background: var(--surface); border-top: 1px solid var(--border); }
+  .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .step-card { text-align: center; padding: 40px 24px; border: 1px solid var(--border); border-radius: 8px; position: relative; transition: all 0.3s; }
+  .step-card:hover { border-color: var(--accent); background: rgba(232,185,79,0.03); }
+  .step-number { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: rgba(232,185,79,0.12); line-height: 1; margin-bottom: 8px; }
+  .step-icon { font-size: 36px; margin-bottom: 16px; display: block; }
+  .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; margin-bottom: 10px; }
+  .step-desc { color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+  /* MODAL OVERLAY */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 40px; max-width: 480px; width: 90%; position: relative;
+    animation: modalIn 0.3s ease;
+  }
+  @keyframes modalIn { from { opacity:0; transform: translateY(20px) scale(0.96); } to { opacity:1; transform: none; } }
+  .modal-close { position: absolute; top: 16px; right: 16px; background: transparent; border: 1px solid var(--border); color: var(--muted); width: 32px; height: 32px; border-radius: 4px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .modal-close:hover { border-color: var(--red); color: var(--red); }
+  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; margin-bottom: 6px; }
+  .modal-subtitle { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+  .modal-input-group { margin-bottom: 18px; }
+  .modal-input-group label { display: block; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .modal-input-group input {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); padding: 13px 16px; border-radius: 4px; font-size: 14px;
+    font-family: 'DM Sans', sans-serif; transition: border-color 0.2s; outline: none;
+  }
+  .modal-input-group input:focus { border-color: var(--accent); }
+  .modal-btn { width: 100%; background: var(--accent); color: var(--bg); padding: 14px; border-radius: 4px; font-weight: 700; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border: none; transition: background 0.2s; margin-top: 8px; }
+  .modal-btn:hover { background: var(--accent2); }
+  .modal-switch { text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); }
+  .modal-switch a { color: var(--accent); cursor: pointer; text-decoration: none; }
+  .modal-error { color: var(--red); font-size: 13px; margin-top: 8px; display: none; }
+  .modal-success { color: var(--green); font-size: 13px; margin-top: 8px; display: none; }
+  /* Tabs in login modal */
+  .modal-tabs { display: flex; gap: 0; margin-bottom: 28px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .modal-tab { flex: 1; padding: 11px; background: transparent; border: none; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .modal-tab.active { background: var(--accent); color: var(--bg); font-weight: 700; }
+
+  /* BOOKING MODAL */
+  .booking-car-summary { display: flex; align-items: center; gap: 16px; background: var(--bg); border-radius: 6px; padding: 16px; margin-bottom: 24px; border: 1px solid var(--border); }
+  .booking-car-summary img { width: 100px; height: 60px; object-fit: cover; border-radius: 4px; }
+  .booking-car-info .car-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; margin-bottom: 2px; }
+  .booking-car-info .car-price-s { color: var(--accent); font-weight: 700; font-size: 14px; }
+  .booking-total { background: rgba(232,185,79,0.08); border: 1px solid rgba(232,185,79,0.2); border-radius: 4px; padding: 16px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .booking-total-label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .booking-total-price { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--accent); }
+  .booking-total-days { font-size: 12px; color: var(--muted); text-align: right; }
+
+  /* MY BOOKINGS */
+  #bookings-section { padding: 80px 48px; display: none; }
+  .bookings-list { display: grid; gap: 16px; }
+  .booking-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; display: flex; align-items: center; gap: 20px; }
+  .booking-item img { width: 120px; height: 72px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+  .booking-item-info { flex: 1; }
+  .booking-item-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; margin-bottom: 4px; }
+  .booking-item-dates { font-size: 13px; color: var(--muted); }
+  .booking-item-status { padding: 6px 14px; border-radius: 3px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+  .status-confirmed { background: rgba(79,232,122,0.1); color: var(--green); border: 1px solid rgba(79,232,122,0.2); }
+  .status-pending { background: rgba(232,185,79,0.1); color: var(--accent); border: 1px solid rgba(232,185,79,0.2); }
+  .booking-item-price { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--accent); letter-spacing: 1px; text-align: right; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 32px; right: 32px; z-index: 3000;
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: 16px 24px; border-radius: 6px; font-size: 14px;
+    display: flex; align-items: center; gap: 12px;
+    animation: toastIn 0.3s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(0); transition: opacity 0.3s;
+  }
+  @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .toast.success { border-left: 3px solid var(--green); }
+  .toast.error { border-left: 3px solid var(--red); }
+  .toast.info { border-left: 3px solid var(--accent); }
+
+  /* FOOTER */
+  footer { background: var(--surface); border-top: 1px solid var(--border); padding: 48px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px; color: var(--accent); }
+  .footer-copy { color: var(--muted); font-size: 12px; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { color: var(--muted); font-size: 12px; letter-spacing: 1px; text-decoration: none; cursor: pointer; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* LOADER */
+  .ajax-loader { text-align: center; padding: 60px; color: var(--muted); font-size: 14px; letter-spacing: 2px; display: none; }
+  .loader-dot { display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; margin: 0 3px; animation: bounce 0.8s infinite alternate; }
+  .loader-dot:nth-child(2) { animation-delay: 0.2s; }
+  .loader-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+
+  /* RESPONSIVE */
+  @media (max-width: 1100px) {
+    .car-showcase { display: none; }
+    .steps-grid { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 14px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    #search-section, #cars-section, #how-section, #bookings-section { padding: 60px 24px; }
+    .search-form { grid-template-columns: 1fr; }
+    .stats-strip { flex-direction: column; }
+    .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+    .steps-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .booking-item { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo" onclick="scrollToTop()">VELOCE</div>
+  <div class="nav-links">
+    <a onclick="smoothScroll('search-section')">Find a Car</a>
+    <a onclick="smoothScroll('cars-section')">Fleet</a>
+    <a onclick="smoothScroll('how-section')">How It Works</a>
+    <a onclick="showBookings()">My Bookings</a>
+  </div>
+  <div id="nav-auth">
+    <button class="nav-cta" onclick="openModal('login')">Sign In</button>
+  </div>
+  <div class="nav-user" id="nav-user">
+    <span id="nav-username">Welcome back!</span>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">⚡ Premium Rentals Available</div>
+    <h1>DRIVE<br>YOUR <span>DREAM</span><br>TODAY</h1>
+    <p>Curated fleet of luxury & performance vehicles. From city escapes to cross-country adventures — start your journey.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="smoothScroll('search-section')">Find Your Car →</button>
+      <button class="btn-outline" onclick="smoothScroll('cars-section')">View Fleet</button>
+    </div>
+  </div>
+  <div class="car-showcase">
+    <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=900&q=80" alt="Hero Car" onerror="this.src='https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=900&q=80'">
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stat-item"><div class="stat-num">120+</div><div class="stat-label">Premium Vehicles</div></div>
+  <div class="stat-item"><div class="stat-num">18</div><div class="stat-label">City Locations</div></div>
+  <div class="stat-item"><div class="stat-num">50K+</div><div class="stat-label">Happy Customers</div></div>
+  <div class="stat-item"><div class="stat-num">4.9★</div><div class="stat-label">Average Rating</div></div>
+</div>
+
+<!-- ── SEARCH ── -->
+<section id="search-section">
+  <div class="section-label">Quick Booking</div>
+  <div class="section-title">FIND YOUR CAR</div>
+  <div class="search-form">
+    <div class="form-group">
+      <label>Pickup Location</label>
+      <select id="pickup-location">
+        <option value="">Select City</option>
+        <option>Mumbai</option><option>Delhi</option><option>Bangalore</option>
+        <option>Chennai</option><option>Hyderabad</option><option>Pune</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Pickup Date</label>
+      <input type="date" id="pickup-date">
+    </div>
+    <div class="form-group">
+      <label>Return Date</label>
+      <input type="date" id="return-date">
+    </div>
+    <div class="form-group">
+      <label>Car Type</label>
+      <select id="car-type-search">
+        <option value="all">All Types</option>
+        <option value="suv">SUV</option>
+        <option value="sedan">Sedan</option>
+        <option value="sports">Sports</option>
+        <option value="luxury">Luxury</option>
+        <option value="electric">Electric</option>
+      </select>
+    </div>
+    <button class="search-btn" onclick="searchCars()">SEARCH</button>
+  </div>
+</section>
+
+<!-- ── CARS FLEET ── -->
+<section id="cars-section">
+  <div class="section-label">Our Fleet</div>
+  <div class="section-title">PREMIUM VEHICLES</div>
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-cat="all" onclick="filterCars(this,'all')">All</button>
+    <button class="filter-btn" data-cat="suv" onclick="filterCars(this,'suv')">SUV</button>
+    <button class="filter-btn" data-cat="sedan" onclick="filterCars(this,'sedan')">Sedan</button>
+    <button class="filter-btn" data-cat="sports" onclick="filterCars(this,'sports')">Sports</button>
+    <button class="filter-btn" data-cat="luxury" onclick="filterCars(this,'luxury')">Luxury</button>
+    <button class="filter-btn" data-cat="electric" onclick="filterCars(this,'electric')">Electric</button>
+  </div>
+  <div class="ajax-loader" id="loader">
+    <span class="loader-dot"></span><span class="loader-dot"></span><span class="loader-dot"></span>
+    <div style="margin-top:12px;">Loading vehicles...</div>
+  </div>
+  <div class="cars-grid" id="cars-grid"></div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how-section">
+  <div class="section-label">The Process</div>
+  <div class="section-title">HOW IT WORKS</div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-number">01</div>
+      <span class="step-icon">🔍</span>
+      <div class="step-title">Choose Your Car</div>
+      <div class="step-desc">Browse our curated fleet. Filter by type, price, or features to find your perfect match.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-number">02</div>
+      <span class="step-icon">📅</span>
+      <div class="step-title">Pick Your Dates</div>
+      <div class="step-desc">Select pickup and return dates. Flexible rentals from a single day to several weeks.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-number">03</div>
+      <span class="step-icon">🔑</span>
+      <div class="step-title">Confirm & Pay</div>
+      <div class="step-desc">Secure checkout with instant confirmation. Your keys will be ready at pickup.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-number">04</div>
+      <span class="step-icon">🏎️</span>
+      <div class="step-title">Hit The Road</div>
+      <div class="step-desc">Pick up your car at any of our 18 locations and enjoy the drive. Simple, fast, premium.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MY BOOKINGS ── -->
+<section id="bookings-section">
+  <div class="section-label">Account</div>
+  <div class="section-title">MY BOOKINGS</div>
+  <div class="bookings-list" id="bookings-list"></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">VELOCE</div>
+  <div class="footer-copy">© 2025 Veloce Car Rentals. All rights reserved.</div>
+  <div class="footer-links">
+    <a>Privacy</a><a>Terms</a><a>Support</a>
+  </div>
+</footer>
+
+<!-- ── LOGIN / REGISTER MODAL ── -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('auth-modal')">✕</button>
+    <div class="modal-title" id="auth-title">SIGN IN</div>
+    <div class="modal-subtitle" id="auth-subtitle">Welcome back to Veloce</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tab-login" onclick="switchTab('login')">Login</button>
+      <button class="modal-tab" id="tab-register" onclick="switchTab('register')">Register</button>
+    </div>
+    <!-- Login Form -->
+    <div id="login-form">
+      <div class="modal-input-group"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com"></div>
+      <div class="modal-input-group"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••"></div>
+      <div class="modal-error" id="login-error">Invalid email or password.</div>
+      <button class="modal-btn" onclick="doLogin()">SIGN IN</button>
+    </div>
+    <!-- Register Form -->
+    <div id="register-form" style="display:none">
+      <div class="modal-input-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="John Doe"></div>
+      <div class="modal-input-group"><label>Email</label><input type="email" id="reg-email" placeholder="you@example.com"></div>
+      <div class="modal-input-group"><label>Password</label><input type="password" id="reg-pass" placeholder="Min. 6 characters"></div>
+      <div class="modal-error" id="reg-error"></div>
+      <div class="modal-success" id="reg-success">Account created! You can now log in.</div>
+      <button class="modal-btn" onclick="doRegister()">CREATE ACCOUNT</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── BOOKING MODAL ── -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" onclick="closeModal('booking-modal')">✕</button>
+    <div class="modal-title">BOOK THIS CAR</div>
+    <div class="modal-subtitle">Fill in your details to confirm</div>
+    <div class="booking-car-summary" id="booking-car-summary"></div>
+    <div class="modal-input-group"><label>Pickup Date</label><input type="date" id="book-pickup"></div>
+    <div class="modal-input-group"><label>Return Date</label><input type="date" id="book-return"></div>
+    <div class="modal-input-group"><label>Pickup Location</label>
+      <select id="book-location" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:13px 16px;border-radius:4px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;">
+        <option>Mumbai</option><option>Delhi</option><option>Bangalore</option><option>Chennai</option><option>Hyderabad</option><option>Pune</option>
+      </select>
+    </div>
+    <div class="booking-total">
+      <div><div class="booking-total-label">Total Estimated Cost</div><div class="booking-total-days" id="book-days-label"></div></div>
+      <div class="booking-total-price" id="book-total-price">₹0</div>
+    </div>
+    <div class="modal-error" id="booking-error"></div>
+    <button class="modal-btn" onclick="confirmBooking()" style="margin-top:16px;">CONFIRM BOOKING</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const CARS = [
+  { id:1, brand:'Porsche', name:'911 Turbo S', category:'sports', price:8500, seats:2, fuel:'Petrol', transmission:'Auto', image:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80', available:true },
+  { id:2, brand:'Mercedes', name:'GLE 450', category:'suv', price:5200, seats:5, fuel:'Diesel', transmission:'Auto', image:'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&q=80', available:true },
+  { id:3, brand:'BMW', name:'5 Series', category:'sedan', price:4100, seats:5, fuel:'Petrol', transmission:'Auto', image:'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&q=80', available:true },
+  { id:4, brand:'Rolls Royce', name:'Ghost', category:'luxury', price:18000, seats:4, fuel:'Petrol', transmission:'Auto', image:'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=600&q=80', available:false },
+  { id:5, brand:'Tesla', name:'Model S Plaid', category:'electric', price:6800, seats:5, fuel:'Electric', transmission:'Auto', image:'https://images.unsplash.com/photo-1536700503339-1e4b06520771?w=600&q=80', available:true },
+  { id:6, brand:'Lamborghini', name:'Huracán', category:'sports', price:25000, seats:2, fuel:'Petrol', transmission:'Auto', image:'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80', available:true },
+  { id:7, brand:'Range Rover', name:'Velar', category:'suv', price:4800, seats:5, fuel:'Diesel', transmission:'Auto', image:'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=600&q=80', available:true },
+  { id:8, brand:'Audi', name:'A8L', category:'luxury', price:7200, seats:5, fuel:'Petrol', transmission:'Auto', image:'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=600&q=80', available:true },
+  { id:9, brand:'Tesla', name:'Model X', category:'electric', price:5500, seats:7, fuel:'Electric', transmission:'Auto', image:'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&q=80', available:true },
+  { id:10, brand:'Ferrari', name:'Roma', category:'sports', price:22000, seats:2, fuel:'Petrol', transmission:'Auto', image:'https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=600&q=80', available:false },
+  { id:11, brand:'Hyundai', name:'Creta', category:'suv', price:1800, seats:5, fuel:'Petrol', transmission:'Manual', image:'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&q=80', available:true },
+  { id:12, brand:'Toyota', name:'Camry', category:'sedan', price:2400, seats:5, fuel:'Hybrid', transmission:'Auto', image:'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600&q=80', available:true },
+];
+
+// ── AUTH DATA (stored in JS only) ─────────────────────────────────────────────
+let users = [
+  { name:'Demo User', email:'demo@veloce.com', password:'demo123' },
+  { name:'Admin', email:'admin@veloce.com', password:'admin123' }
+];
+let currentUser = null;
+let bookings = [];
+let selectedCar = null;
+let currentFilter = 'all';
+
+// ── RENDER CARS ───────────────────────────────────────────────────────────────
+function renderCars(cars) {
+  const grid = document.getElementById('cars-grid');
+  if (!cars.length) {
+    grid.innerHTML = '<p style="color:var(--muted);text-align:center;padding:60px;grid-column:1/-1;">No vehicles found matching your criteria.</p>';
+    return;
+  }
+  grid.innerHTML = cars.map(car => `
+    <div class="car-card" onclick="openBookingModal(${car.id})">
+      <div class="car-card-img">
+        <img src="${car.image}" alt="${car.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&q=80'">
+        <div class="car-badge ${car.available ? 'available' : 'limited'}">${car.available ? 'Available' : 'Booked'}</div>
+      </div>
+      <div class="car-card-body">
+        <div class="car-brand">${car.brand}</div>
+        <div class="car-name">${car.name}</div>
+        <div class="car-specs">
+          <div class="spec"><span class="spec-icon">👥</span>${car.seats} Seats</div>
+          <div class="spec"><span class="spec-icon">⛽</span>${car.fuel}</div>
+          <div class="spec"><span class="spec-icon">⚙️</span>${car.transmission}</div>
+        </div>
+        <div class="car-card-footer">
+          <div class="car-price">₹${car.price.toLocaleString()}<span>/day</span></div>
+          <button class="rent-btn" onclick="event.stopPropagation();openBookingModal(${car.id})">${car.available ? 'RENT NOW' : 'WAITLIST'}</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// AJAX-style simulated fetch with loader
+function ajaxLoadCars(filter) {
+  const loader = document.getElementById('loader');
+  const grid = document.getElementById('cars-grid');
+  loader.style.display = 'block';
+  grid.innerHTML = '';
+  // Simulate network delay
+  setTimeout(() => {
+    loader.style.display = 'none';
+    const filtered = filter === 'all' ? CARS : CARS.filter(c => c.category === filter);
+    renderCars(filtered);
+  }, 600);
+}
+
+function filterCars(btn, cat) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = cat;
+  ajaxLoadCars(cat);
+}
+
+function searchCars() {
+  const loc = document.getElementById('pickup-location').value;
+  const pickup = document.getElementById('pickup-date').value;
+  const ret = document.getElementById('return-date').value;
+  const type = document.getElementById('car-type-search').value;
+  if (!loc) { showToast('Please select a pickup location', 'error'); return; }
+  if (!pickup) { showToast('Please select a pickup date', 'error'); return; }
+  if (!ret) { showToast('Please select a return date', 'error'); return; }
+  if (new Date(ret) <= new Date(pickup)) { showToast('Return date must be after pickup date', 'error'); return; }
+  smoothScroll('cars-section');
+  ajaxLoadCars(type === 'all' ? 'all' : type);
+  showToast(`Showing ${type === 'all' ? 'all' : type} cars in ${loc}`, 'info');
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+function openModal(type) {
+  switchTab(type);
+  document.getElementById('auth-modal').classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function switchTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('tab-login').classList.toggle('active', isLogin);
+  document.getElementById('tab-register').classList.toggle('active', !isLogin);
+  document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+  document.getElementById('register-form').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('auth-title').textContent = isLogin ? 'SIGN IN' : 'JOIN VELOCE';
+  document.getElementById('auth-subtitle').textContent = isLogin ? 'Welcome back to Veloce' : 'Create your account';
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+  // Simulate AJAX call
+  setTimeout(() => {
+    const user = users.find(u => u.email === email && u.password === pass);
+    if (user) {
+      currentUser = user;
+      err.style.display = 'none';
+      closeModal('auth-modal');
+      updateNavAuth();
+      showToast(`Welcome back, ${user.name}! 🚗`, 'success');
+    } else {
+      err.style.display = 'block';
+    }
+  }, 400);
+}
+
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const err = document.getElementById('reg-error');
+  const succ = document.getElementById('reg-success');
+  err.style.display = 'none'; succ.style.display = 'none';
+  if (!name || !email || !pass) { err.textContent = 'All fields are required.'; err.style.display = 'block'; return; }
+  if (pass.length < 6) { err.textContent = 'Password must be at least 6 characters.'; err.style.display = 'block'; return; }
+  if (users.find(u => u.email === email)) { err.textContent = 'Email already registered.'; err.style.display = 'block'; return; }
+  setTimeout(() => {
+    users.push({ name, email, password: pass });
+    succ.style.display = 'block';
+    setTimeout(() => { switchTab('login'); document.getElementById('login-email').value = email; }, 1500);
+  }, 500);
+}
+
+function logout() {
+  currentUser = null;
+  updateNavAuth();
+  document.getElementById('bookings-section').style.display = 'none';
+  showToast('Logged out successfully', 'info');
+}
+
+function updateNavAuth() {
+  const auth = document.getElementById('nav-auth');
+  const user = document.getElementById('nav-user');
+  const uname = document.getElementById('nav-username');
+  if (currentUser) {
+    auth.style.display = 'none';
+    user.style.display = 'flex';
+    uname.textContent = `Hi, ${currentUser.name.split(' ')[0]} 👋`;
+  } else {
+    auth.style.display = 'flex';
+    user.style.display = 'none';
+  }
+}
+
+// ── BOOKING ───────────────────────────────────────────────────────────────────
+function openBookingModal(carId) {
+  if (!currentUser) { openModal('login'); showToast('Please sign in to book a car', 'info'); return; }
+  selectedCar = CARS.find(c => c.id === carId);
+  if (!selectedCar) return;
+  const summary = document.getElementById('booking-car-summary');
+  summary.innerHTML = `
+    <img src="${selectedCar.image}" alt="${selectedCar.name}" onerror="this.src='https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400&q=80'">
+    <div class="booking-car-info">
+      <div class="car-brand" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">${selectedCar.brand}</div>
+      <div class="car-name">${selectedCar.name}</div>
+      <div class="car-price-s">₹${selectedCar.price.toLocaleString()} / day</div>
+    </div>
+  `;
+  document.getElementById('booking-error').style.display = 'none';
+  document.getElementById('book-total-price').textContent = '₹0';
+  document.getElementById('book-days-label').textContent = '';
+  // Set min dates
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('book-pickup').min = today;
+  document.getElementById('book-return').min = today;
+  document.getElementById('book-pickup').value = '';
+  document.getElementById('book-return').value = '';
+  // Live price calc
+  ['book-pickup','book-return'].forEach(id => document.getElementById(id).addEventListener('change', calcBookingTotal));
+  document.getElementById('booking-modal').classList.add('open');
+}
+
+function calcBookingTotal() {
+  const p = document.getElementById('book-pickup').value;
+  const r = document.getElementById('book-return').value;
+  const lbl = document.getElementById('book-days-label');
+  const total = document.getElementById('book-total-price');
+  if (p && r && selectedCar) {
+    const days = Math.ceil((new Date(r) - new Date(p)) / 86400000);
+    if (days > 0) {
+      lbl.textContent = `${days} day${days > 1 ? 's' : ''}`;
+      total.textContent = `₹${(days * selectedCar.price).toLocaleString()}`;
+    }
+  }
+}
+
+function confirmBooking() {
+  const pickup = document.getElementById('book-pickup').value;
+  const ret = document.getElementById('book-return').value;
+  const loc = document.getElementById('book-location').value;
+  const err = document.getElementById('booking-error');
+  err.style.display = 'none';
+  if (!pickup || !ret) { err.textContent = 'Please select pickup and return dates.'; err.style.display = 'block'; return; }
+  if (new Date(ret) <= new Date(pickup)) { err.textContent = 'Return date must be after pickup.'; err.style.display = 'block'; return; }
+  const days = Math.ceil((new Date(ret) - new Date(pickup)) / 86400000);
+  setTimeout(() => {
+    bookings.push({
+      id: Date.now(), car: selectedCar, pickup, ret, loc, days,
+      total: days * selectedCar.price, status: 'confirmed', user: currentUser.email
+    });
+    closeModal('booking-modal');
+    showToast(`🎉 Booking confirmed for ${selectedCar.name}!`, 'success');
+  }, 600);
+}
+
+function showBookings() {
+  if (!currentUser) { openModal('login'); showToast('Sign in to view your bookings', 'info'); return; }
+  const section = document.getElementById('bookings-section');
+  const list = document.getElementById('bookings-list');
+  const myBookings = bookings.filter(b => b.user === currentUser.email);
+  if (!myBookings.length) {
+    list.innerHTML = '<p style="color:var(--muted);padding:40px 0;">No bookings yet. Rent your first car today!</p>';
+  } else {
+    list.innerHTML = myBookings.map(b => `
+      <div class="booking-item">
+        <img src="${b.car.image}" alt="${b.car.name}" onerror="this.src='https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400&q=80'">
+        <div class="booking-item-info">
+          <div class="booking-item-name">${b.car.brand} ${b.car.name}</div>
+          <div class="booking-item-dates">📅 ${b.pickup} → ${b.ret} &nbsp;|&nbsp; 📍 ${b.loc} &nbsp;|&nbsp; ${b.days} day${b.days>1?'s':''}</div>
+        </div>
+        <div class="booking-item-status status-${b.status}">${b.status}</div>
+        <div class="booking-item-price">₹${b.total.toLocaleString()}</div>
+      </div>
+    `).join('');
+  }
+  section.style.display = 'block';
+  smoothScroll('bookings-section');
+}
+
+// ── UTILITIES ─────────────────────────────────────────────────────────────────
+function smoothScroll(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+function showToast(msg, type='info') {
+  const old = document.querySelector('.toast');
+  if (old) old.remove();
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
+  toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${msg}</span>`;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+
+// Date min enforcement
+document.getElementById('book-pickup').addEventListener('change', function() {
+  document.getElementById('book-return').min = this.value;
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.onload = () => {
+  // Set search date defaults
+  const today = new Date().toISOString().split('T')[0];
+  const nextWeek = new Date(Date.now() + 7*86400000).toISOString().split('T')[0];
+  document.getElementById('pickup-date').value = today;
+  document.getElementById('pickup-date').min = today;
+  document.getElementById('return-date').value = nextWeek;
+  document.getElementById('return-date').min = today;
+  ajaxLoadCars('all');
+};
+</script>
+</body>
+</html>
